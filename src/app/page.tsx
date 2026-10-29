@@ -1,5 +1,5 @@
 ﻿"use client";
-
+import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import type { User } from "@supabase/supabase-js";
 import { supabase } from "@/lib/supabase";
@@ -61,11 +61,9 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    if (user) {
-      void loadNotes();
-    } else {
-      setNotes([]);
-    }
+    if (!user) return;
+
+    void loadNotes();
   }, [user, loadNotes]);
 
   async function authenticate(signUp: boolean) {
@@ -89,33 +87,47 @@ export default function Home() {
     }
   }
 
-  async function saveNote() {
-    if (!user) return;
+  
+async function saveNote() {
+  if (!user) return;
 
-    setBusy(true);
-    setMessage("");
+  setBusy(true);
+  setMessage("");
 
+  try {
     const values = {
       title: title.trim() || "Untitled note",
       content,
     };
 
     const result = editing
-      ? await supabase.from("notes").update(values).eq("id", editing)
-      : await supabase.from("notes").insert({ ...values, user_id: user.id });
+      ? await supabase
+          .from("notes")
+          .update(values)
+          .eq("id", editing)
+          .eq("user_id", user.id)
+      : await supabase.from("notes").insert({
+          ...values,
+          user_id: user.id,
+        });
 
     if (result.error) {
       setMessage(result.error.message);
-    } else {
-      setTitle("");
-      setContent("");
-      setEditing(null);
-      setMessage("Your note has been saved!");
-      await loadNotes();
+      return;
     }
 
+    setTitle("");
+    setContent("");
+    setEditing(null);
+    setMessage("Your note has been saved!");
+
+    await loadNotes();
+  } catch {
+    setMessage("Something went wrong. Please try again.");
+  } finally {
     setBusy(false);
   }
+}
 
   function startEditing(note: Note) {
     setEditing(note.id);
@@ -149,12 +161,24 @@ export default function Home() {
     <main className="min-h-screen bg-[#fff9f5] text-[#443842]">
       <header className="border-b border-rose-100 bg-white">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-5 py-4">
-          <a href="/" className="text-2xl font-black tracking-tight">
-            ðŸ“š InStudy
-          </a>
+          <Link href="/" className="text-2xl font-black tracking-tight">
+            📚 InStudy
+          </Link>
           {user && (
             <button
-              onClick={() => void supabase.auth.signOut()}
+              onClick={async () => {
+                const { error } = await supabase.auth.signOut();
+
+                if (error) {
+                  setMessage(error.message);
+                  return;
+                }
+
+                setNotes([]);
+                setEditing(null);
+                setTitle("");
+                setContent("");
+              }}
               className="rounded-full border border-rose-200 px-4 py-2 text-sm hover:bg-rose-50"
             >
               Log out
@@ -167,7 +191,7 @@ export default function Home() {
         {!user ? (
           <div className="mx-auto max-w-md rounded-3xl border border-rose-100 bg-white p-7 shadow-sm">
             <div className="mb-6 text-center">
-              <div className="text-5xl">ðŸŒ¸</div>
+              <div className="text-5xl">🌸</div>
               <h1 className="mt-3 text-3xl font-black">Welcome to InStudy</h1>
               <p className="mt-2 text-sm text-gray-500">
                 Your little space to learn and grow.
@@ -229,7 +253,7 @@ export default function Home() {
                 Your personal study space
               </p>
               <h1 className="mt-2 text-3xl font-black sm:text-4xl">
-                Hello, learner! âœ¨
+                Hello, learner! ✨
               </h1>
               <p className="mt-2 text-gray-500">
                 Organize your thoughts, one note at a time.
@@ -238,7 +262,7 @@ export default function Home() {
 
             <section className="mb-9 rounded-3xl border border-rose-100 bg-white p-5 shadow-sm sm:p-7">
               <h2 className="mb-4 text-xl font-bold">
-                {editing ? "Edit your note âœï¸" : "Create a study note ðŸ“"}
+                {editing ? "Edit your note ✏️" : "Create a study note 📝"}
               </h2>
 
               <input
@@ -281,7 +305,7 @@ export default function Home() {
             </section>
 
             <div className="mb-5 flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
-              <h2 className="text-2xl font-bold">My study notes â™¡</h2>
+              <h2 className="text-2xl font-bold">My study notes ♡</h2>
               <input
                 value={search}
                 onChange={(event) => setSearch(event.target.value)}
@@ -296,7 +320,7 @@ export default function Home() {
                 .includes(search.toLowerCase())
             ).length === 0 ? (
               <div className="rounded-3xl border border-dashed border-rose-200 p-10 text-center text-gray-500">
-                <div className="text-4xl">ðŸŒ·</div>
+                <div className="text-4xl">🌷</div>
                 <p className="mt-3">No notes yet. Create your first one!</p>
               </div>
             ) : (
@@ -350,7 +374,7 @@ export default function Home() {
       </section>
 
       <footer className="py-8 text-center text-sm text-gray-400">
-        Made with â™¡ by InStudy
+        Made with ♡ by InStudy
       </footer>
     </main>
   );
