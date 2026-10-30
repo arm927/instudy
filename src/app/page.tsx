@@ -87,47 +87,46 @@ export default function Home() {
     }
   }
 
-  
-async function saveNote() {
-  if (!user) return;
+  async function saveNote() {
+    if (!user) return;
 
-  setBusy(true);
-  setMessage("");
+    setBusy(true);
+    setMessage("");
 
-  try {
-    const values = {
-      title: title.trim() || "Untitled note",
-      content,
-    };
+    try {
+      const values = {
+        title: title.trim() || "Untitled note",
+        content,
+      };
 
-    const result = editing
-      ? await supabase
-          .from("notes")
-          .update(values)
-          .eq("id", editing)
-          .eq("user_id", user.id)
-      : await supabase.from("notes").insert({
-          ...values,
-          user_id: user.id,
-        });
+      const result = editing
+        ? await supabase
+            .from("notes")
+            .update(values)
+            .eq("id", editing)
+            .eq("user_id", user.id)
+        : await supabase.from("notes").insert({
+            ...values,
+            user_id: user.id,
+          });
 
-    if (result.error) {
-      setMessage(result.error.message);
-      return;
+      if (result.error) {
+        setMessage(result.error.message);
+        return;
+      }
+
+      setTitle("");
+      setContent("");
+      setEditing(null);
+      setMessage("Your note has been saved!");
+
+      await loadNotes();
+    } catch {
+      setMessage("Something went wrong. Please try again.");
+    } finally {
+      setBusy(false);
     }
-
-    setTitle("");
-    setContent("");
-    setEditing(null);
-    setMessage("Your note has been saved!");
-
-    await loadNotes();
-  } catch {
-    setMessage("Something went wrong. Please try again.");
-  } finally {
-    setBusy(false);
   }
-}
 
   function startEditing(note: Note) {
     setEditing(note.id);
@@ -230,21 +229,26 @@ async function saveNote() {
                 />
               </label>
 
-              <button
-                disabled={busy}
-                className="w-full rounded-xl bg-rose-300 p-3 font-semibold text-white hover:bg-rose-400 disabled:opacity-60"
-              >
-                Log in
-              </button>
-            </form>
+    
+<div className="flex gap-3 pt-2">
+  {/* Login button */}
+  <button
+    type="submit"
+    disabled={busy}
+    className="flex-1 rounded-xl bg-rose-300 p-3 font-semibold text-white transition hover:bg-rose-400 disabled:opacity-60"
+  >
+    Log in
+  </button>
 
-            <button
-              disabled={busy || !email || password.length < 6}
-              onClick={() => void authenticate(true)}
-              className="mt-3 w-full rounded-xl border border-rose-200 p-3 font-medium hover:bg-rose-50 disabled:opacity-60"
-            >
-              Create an account
-            </button>
+  {/* Registration link */}
+  <Link
+    href="/register"
+    className="flex flex-1 items-center justify-center rounded-xl border border-rose-200 bg-white p-3 text-center font-semibold text-rose-700 transition hover:bg-rose-50"
+  >
+    Create an account
+  </Link>
+</div>
+            </form>
           </div>
         ) : (
           <>
