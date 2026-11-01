@@ -19,5 +19,6 @@ export default function ProtectedRoute({ children }) {
     return <div>Loading your study space...</div>;
   }
 
+  
   return children;
 }

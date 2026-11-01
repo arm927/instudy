@@ -2,44 +2,39 @@
 "use client";
 
 import ReminderNotes from "../../components/Dashboard/Remindernotes";
+import DashboardHeader from "../../components/Dashboard/dashboardheader";
 import ProtectedRoute from "../../components/ProtectedRoute";
 import "../../styles/reminder.css";
 
 export default function DashboardPage() {
   return (
     <ProtectedRoute>
-      <main className="min-h-screen p-8 dashboard-page">
+      <>
+        <DashboardHeader />
 
-        {/* WELCOME SECTION */}
-        <section className="welcome-section">
-          <p className="welcome-label">
-            YOUR PERSONAL STUDY SPACE
-          </p>
+        <main className="min-h-screen p-8 dashboard-page">
+          <section className="welcome-section">
+            <p className="welcome-label">
+              YOUR PERSONAL STUDY SPACE
+            </p>
 
-          <h1 className="text-3xl font-bold">
-            Hello, learner! ✨
-          </h1>
+            <h1 className="text-3xl font-bold">
+              Hello, learner! ✨
+            </h1>
 
-          <p className="mt-2 text-gray-500">
-            Organize your thoughts, one reminder at a time.
-          </p>
-        </section>
+            <p className="mt-2 text-gray-500">
+              Organize your thoughts, one reminder at a time.
+            </p>
+          </section>
 
-        {/* REMINDER NOTES */}
-        <ReminderNotes />
+          <ReminderNotes />
 
-        {/* STUDY SETS - COMING NEXT */}
-        <section className="studysets-section">
-          <h2 className="text-2xl font-bold">
-            My Study Sets ♡
-          </h2>
-
-          <p className="mt-2 text-gray-500">
-            Your learning collections will appear here.
-          </p>
-        </section>
-
-      </main>
+          <section className="studysets-section">
+            <h2>My Study Sets ♡</h2>
+            <p>Your learning collections will appear here.</p>
+          </section>
+        </main>
+      </>
     </ProtectedRoute>
   );
 }
