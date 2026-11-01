@@ -34,8 +34,12 @@ export default function DashboardHeader() {
   return (
     <header className="dashboard-header">
       <Link href="/dashboard" className="dashboard-logo">
-        InStudy<span>♡</span>
-      </Link>
+  <img
+    src="/logo/instudy.png"
+    alt="InStudy"
+    className="dashboard-logo-image"
+  />
+</Link>
 
       <div className="dashboard-header-right">
         <div className="dashboard-user">
