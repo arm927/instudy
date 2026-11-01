@@ -1,0 +1,116 @@
+.studyset-page {
+  min-height: 100vh;
+  padding: 40px;
+  background: #fffaf7;
+  color: #343448;
+}
+
+.studyset-header {
+  margin-bottom: 45px;
+}
+
+.back-link {
+  color: #9b7184;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.studyset-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 30px;
+}
+
+.studyset-heading h1 {
+  font-size: 32px;
+  margin-bottom: 8px;
+}
+
+.studyset-heading p {
+  color: #85808a;
+}
+
+.more-button {
+  border: none;
+  background: #f5e9eb;
+  border-radius: 10px;
+  padding: 10px 16px;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.studyset-materials h2,
+.studyset-info h2 {
+  font-size: 20px;
+  margin-bottom: 20px;
+}
+
+.material-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.material-card {
+  padding: 25px;
+  border-radius: 16px;
+  min-height: 145px;
+  transition: transform 0.2s ease;
+}
+
+.material-card:hover {
+  transform: translateY(-3px);
+}
+
+.material-icon {
+  font-size: 26px;
+}
+
+.material-card h3 {
+  margin-top: 15px;
+  margin-bottom: 5px;
+}
+
+.material-card p {
+  font-size: 14px;
+  color: #77717e;
+}
+
+.flashcard-card {
+  background: #fce9ed;
+}
+
+.quiz-card {
+  background: #e9eef9;
+}
+
+.notes-card {
+  background: #f1eaf8;
+}
+
+.studyset-info {
+  margin-top: 45px;
+  padding: 25px;
+  background: white;
+  border-radius: 16px;
+}
+
+.studyset-info p {
+  color: #85808a;
+  font-size: 14px;
+}
+
+@media (max-width: 700px) {
+  .studyset-page {
+    padding: 20px;
+  }
+
+  .material-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .studyset-heading h1 {
+    font-size: 26px;
+  }
+}
