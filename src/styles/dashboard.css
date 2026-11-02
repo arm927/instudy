@@ -31,19 +31,24 @@
 }
 
 .dashboard-logo {
-  font-size: 25px;
-  font-weight: 800;
-  color: #75558c;
+  display: flex;
+  align-items: center;
   text-decoration: none;
+  flex-shrink: 0;
 }
 
-.dashboard-logo span {
-  color: #e9a6c7;
+.dashboard-logo-image {
+  display: block;
+  width: 165px;
+  height: 75px;
+  object-fit: contain;
+  object-position: left center;
 }
+
 
 .dashboard-header-right {
   display: flex;
-  align-items: center;
+  align-items: right;
   gap: 22px;
 }
 

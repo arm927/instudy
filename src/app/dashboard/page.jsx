@@ -5,6 +5,7 @@ import ReminderNotes from "../../components/Dashboard/Remindernotes";
 import DashboardHeader from "../../components/Dashboard/dashboardheader";
 import ProtectedRoute from "../../components/ProtectedRoute";
 import "../../styles/reminder.css";
+import "../../styles/dashboard.css";
 
 export default function DashboardPage() {
   return (
