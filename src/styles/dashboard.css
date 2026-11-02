@@ -17,60 +17,108 @@
 
 /* HEADER */
 
+
 .dashboard-header {
-  height: 76px;
-  padding: 0 6%;
+  width: 100%;
+  min-height: 76px;
+  padding: 16px 32px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   background: #ffffff;
-  border-bottom: 1px solid #f1e8e5;
+  border-bottom: 1px solid #eee8f1;
+  position: relative;
 }
 
 .dashboard-logo {
-  font-size: 27px;
-  font-weight: 800;
-  color: #343448;
+  display: flex;
+  align-items: center;
   text-decoration: none;
-  letter-spacing: -1px;
+  flex-shrink: 0;
 }
 
-.dashboard-logo span {
-  color: #d68ba4;
+.dashboard-logo-image {
+  display: block;
+  width: 165px;
+  height: 75px;
+  object-fit: contain;
+  object-position: left center;
 }
+
 
 .dashboard-header-right {
   display: flex;
-  align-items: center;
+  align-items: right;
   gap: 22px;
 }
 
-.profile-info {
+.dashboard-user {
   display: flex;
   align-items: center;
   gap: 10px;
-  font-size: 14px;
-  color: #625c68;
 }
 
-.profile-avatar {
+.dashboard-user-icon {
   width: 36px;
   height: 36px;
-  background: #f5dce5;
-  color: #9e627c;
-  display: grid;
-  place-items: center;
   border-radius: 50%;
-  font-weight: bold;
+  background: #eee3f5;
+  color: #75558c;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}
+
+.dashboard-user-name {
+  color: #51465b;
+  font-size: 14px;
+  font-weight: 600;
 }
 
 .logout-button {
-  border: none;
-  background: transparent;
-  color: #8b7180;
+  padding: 9px 17px;
+  border: 1px solid #e5d9eb;
+  border-radius: 9px;
+  background: #ffffff;
+  color: #75558c;
+  font-weight: 600;
   cursor: pointer;
+  transition: 0.2s;
+}
+
+.logout-button:hover {
+  background: #75558c;
+  color: #ffffff;
+}
+
+.logout-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.logout-error {
+  position: absolute;
+  right: 32px;
+  top: 100%;
+  color: #dc2626;
   font-size: 13px;
 }
+
+@media (max-width: 600px) {
+  .dashboard-header {
+    padding: 14px 16px;
+  }
+
+  .dashboard-header-right {
+    gap: 10px;
+  }
+
+  .dashboard-user-name {
+    display: none;
+  }
+}
+
 
 /* MAIN CONTENT */
 

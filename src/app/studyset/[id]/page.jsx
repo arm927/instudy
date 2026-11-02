@@ -1,11 +1,13 @@
+
 "use client";
-import "../../../styles/studyset.css";
+
+import { Suspense, useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
 import Link from "next/link";
+import "../../../styles/studyset.css";
 import { supabase } from "../../../lib/supabase";
 
-export default function StudySetPage() {
+function StudySetContent() {
   const params = useParams();
   const router = useRouter();
   const id = params.id;
@@ -27,7 +29,6 @@ export default function StudySetPage() {
       setLoading(true);
       setError("");
 
-      // Fetch the Study Set
       const { data, error } = await supabase
         .from("study_sets")
         .select("*")
@@ -36,14 +37,15 @@ export default function StudySetPage() {
 
       if (error) {
         console.error(error);
-        setError("Study Set not found or you don't have permission to access it.");
+        setError(
+          "Study Set not found or you don't have permission to access it."
+        );
         setLoading(false);
         return;
       }
 
       setStudySet(data);
 
-      // Fetch the number of learning materials
       const [flashcards, quizzes, notes] = await Promise.all([
         supabase
           .from("flashcards")
@@ -96,10 +98,7 @@ export default function StudySetPage() {
 
   return (
     <main className="studyset-page">
-
-      {/* Header */}
       <header className="studyset-header">
-
         <Link href="/dashboard" className="back-link">
           ← Back to Study Sets
         </Link>
@@ -109,7 +108,8 @@ export default function StudySetPage() {
             <h1>{studySet.title}</h1>
 
             <p>
-              {studySet.description || "Your personal learning workspace."}
+              {studySet.description ||
+                "Your personal learning workspace."}
             </p>
           </div>
 
@@ -117,16 +117,12 @@ export default function StudySetPage() {
             ⋯
           </button>
         </div>
-
       </header>
 
-      {/* Learning Materials */}
       <section className="studyset-materials">
-
         <h2>Your Learning Materials</h2>
 
         <div className="material-grid">
-
           <div className="material-card flashcard-card">
             <span className="material-icon">▤</span>
             <h3>Flashcards</h3>
@@ -144,11 +140,9 @@ export default function StudySetPage() {
             <h3>Notes</h3>
             <p>{counts.notes} notes</p>
           </div>
-
         </div>
       </section>
 
-      {/* Study Set Information */}
       <section className="studyset-info">
         <h2>About this Study Set</h2>
 
@@ -159,7 +153,14 @@ export default function StudySetPage() {
             : "Unknown"}
         </p>
       </section>
-
     </main>
+  );
+}
+
+export default function StudySetPage() {
+  return (
+    <Suspense fallback={<div>Loading study set...</div>}>
+      <StudySetContent />
+    </Suspense>
   );
 }

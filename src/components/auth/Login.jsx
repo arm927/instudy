@@ -1,26 +1,15 @@
+
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { supabase } from "../../lib/supabase";
-import { useAuth } from "../../contexts/AuthContext";
 
 export default function Login() {
-  const router = useRouter();
-  const { user, loading: authLoading } = useAuth();
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-
-  // Automatically redirect if the user is already logged in
-  useEffect(() => {
-    if (!authLoading && user) {
-      router.replace("/dashboard");
-    }
-  }, [user, authLoading, router]);
 
   async function handleLogin(e) {
     e.preventDefault();
@@ -36,20 +25,12 @@ export default function Login() {
 
       if (error) throw error;
 
-      router.replace("/dashboard");
+      // AuthRedirect will handle navigation.
     } catch (err) {
       setError(err.message || "Unable to log in.");
     } finally {
       setLoading(false);
     }
-  }
-
-  if (authLoading) {
-    return <div>Loading...</div>;
-  }
-
-  if (user) {
-    return <div>Redirecting...</div>;
   }
 
   return (
@@ -83,10 +64,16 @@ export default function Login() {
             required
           />
 
-          {error && <p role="alert" className="error-message">{error}</p>}
+          {error && (
+            <p role="alert" className="error-message">
+              {error}
+            </p>
+          )}
 
           <div className="form-actions">
-            <Link href="/forgot-password">Forgot password?</Link>
+            <Link href="/forgot-password">
+              Forgot password?
+            </Link>
           </div>
 
           <button type="submit" disabled={loading}>
@@ -95,7 +82,8 @@ export default function Login() {
         </form>
 
         <p className="signup-prompt">
-          Don't have an account? <Link href="/register">Sign up</Link>
+          Don't have an account?{" "}
+          <Link href="/register">Sign up</Link>
         </p>
       </section>
     </main>
