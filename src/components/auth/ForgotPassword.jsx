@@ -1,6 +1,8 @@
 
+"use client";
+
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import Link from "next/link";
 import { supabase } from "../../lib/supabase";
 
 export default function ForgotPassword() {
@@ -17,14 +19,12 @@ export default function ForgotPassword() {
     setMessage("");
 
     try {
-      const { error } =
-        await supabase.auth.resetPasswordForEmail(
-          email.trim(),
-          {
-            redirectTo:
-              `${window.location.origin}/reset-password`,
-          }
-        );
+      const { error } = await supabase.auth.resetPasswordForEmail(
+        email.trim(),
+        {
+          redirectTo: `${window.location.origin}/reset-password`,
+        }
+      );
 
       if (error) throw error;
 
@@ -32,7 +32,7 @@ export default function ForgotPassword() {
         "If an account exists for this email, a password reset link will be sent."
       );
     } catch (err) {
-      setError(err.message);
+      setError(err.message || "Something went wrong. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -63,7 +63,7 @@ export default function ForgotPassword() {
           </button>
         </form>
 
-        <Link to="/login">Back to login</Link>
+        <Link href="/login">Back to login</Link>
       </section>
     </main>
   );
