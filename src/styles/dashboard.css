@@ -39,8 +39,8 @@
 
 .dashboard-logo-image {
   display: block;
-  width: 165px;
-  height: 75px;
+  width: 185px;
+  height: 95px;
   object-fit: contain;
   object-position: left center;
 }
@@ -548,4 +548,63 @@
   .studyset-modal {
     padding: 25px;
   }
+}
+
+
+/* CREATE STUDY SET MODAL */
+
+.create-studyset-modal {
+  overflow: hidden;
+}
+
+.create-modal-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: #fcebed;
+  color: #c77f98;
+  display: grid;
+  place-items: center;
+  font-size: 27px;
+  margin-bottom: 15px;
+}
+
+.create-studyset-modal h2 {
+  color: #51465b;
+}
+
+.create-studyset-modal > p {
+  line-height: 1.6;
+}
+
+.studyset-icon-picker {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin: 8px 0 15px;
+}
+
+.icon-option {
+  height: 52px;
+  border: 1px solid #eee1e8;
+  border-radius: 10px;
+  background: #ffffff;
+  font-size: 24px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.icon-option:hover {
+  background: #fff0f3;
+  border-color: #d995aa;
+}
+
+.icon-option.selected {
+  background: #fcebed;
+  border: 2px solid #d995aa;
+}
+
+.create-modal-error {
+  color: #d15d70;
+  font-size: 13px;
 }
