@@ -2,7 +2,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 import { supabase } from "../../../lib/supabase";
 import { useAuth } from "../../../contexts/AuthContext";
@@ -10,8 +10,17 @@ import ProtectedRoute from "../../../components/ProtectedRoute";
 
 import "../../../styles/studyset.css";
 
-export default function StudySetPage() {
-  const { id } = useParams();
+export default function StudySetPage({ params }) {
+  const [id, setId] = useState(null);
+
+  useEffect(() => {
+    async function getParams() {
+      const resolvedParams = await params;
+      setId(resolvedParams.id);
+    }
+
+    getParams();
+  }, [params]);
   const router = useRouter();
   const { user } = useAuth();
 
