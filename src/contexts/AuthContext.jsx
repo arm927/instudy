@@ -1,4 +1,3 @@
-
 "use client";
 
 import {
@@ -20,18 +19,6 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     let mounted = true;
 
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange(
-      (_event, currentSession) => {
-        if (!mounted) return;
-
-        setSession(currentSession);
-        setUser(currentSession?.user ?? null);
-        setLoading(false);
-      }
-    );
-
     async function initializeAuth() {
       const { data, error } =
         await supabase.auth.getSession();
@@ -49,6 +36,32 @@ export function AuthProvider({ children }) {
 
     initializeAuth();
 
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(
+      (_event, currentSession) => {
+        if (!mounted) return;
+
+        // OPTIMIZATION: Only update state if the user actually changed 
+        // (prevents background token refreshes from triggering re-renders)
+        setSession((prevSession) => {
+          if (prevSession?.user?.id === currentSession?.user?.id) {
+            return prevSession; // Keep exact same reference, stops re-renders
+          }
+          return currentSession;
+        });
+
+        setUser((prevUser) => {
+          if (prevUser?.id === currentSession?.user?.id) {
+            return prevUser; // Keep exact same reference
+          }
+          return currentSession?.user ?? null;
+        });
+
+        setLoading(false);
+      }
+    );
+
     return () => {
       mounted = false;
       subscription.unsubscribe();
@@ -57,7 +70,6 @@ export function AuthProvider({ children }) {
 
   async function signOut() {
     const { error } = await supabase.auth.signOut();
-
     if (error) throw error;
   }
 
