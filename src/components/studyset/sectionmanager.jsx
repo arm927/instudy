@@ -145,7 +145,6 @@ export default function SectionManager({
 
                     <div>
                       <h3>{section.title}</h3>
-                      <p>📚 Learning section</p>
                     </div>
                   </div>
 
