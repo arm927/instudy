@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "../../lib/supabase";
 
@@ -16,6 +17,7 @@ const ALLOWED_EXTENSIONS = [
 ];
 
 export default function FileUpload({ studySetId, userId, sectionId = null }) {
+ const router = useRouter();
   const inputRef = useRef(null);
 
   const [files, setFiles] = useState([]);
@@ -152,17 +154,26 @@ export default function FileUpload({ studySetId, userId, sectionId = null }) {
 
   // Open a file using a temporary signed URL
   async function handleOpen(file) {
-    const { data, error: signError } = await supabase.storage
-      .from(BUCKET)
-      .createSignedUrl(file.file_path, 60);
-
-    if (signError) {
-      setError(`Unable to open file: ${signError.message}`);
-      return;
-    }
-
-    window.open(data.signedUrl, "_blank");
+    console.log("OPEN CLICKED", file);
+  if (file.file_type?.toLowerCase() === "pdf") {
+    router.push(
+      `/studyset/${studySetId}/viewer/${file.id}`
+    );
+    return;
   }
+
+  // Keep existing behavior for other file formats for now
+  const { data, error: signError } = await supabase.storage
+    .from(BUCKET)
+    .createSignedUrl(file.file_path, 60);
+
+  if (signError) {
+    setError(`Unable to open file: ${signError.message}`);
+    return;
+  }
+
+  window.open(data.signedUrl, "_blank");
+}
 
   // Delete file
   async function handleDelete(file) {
