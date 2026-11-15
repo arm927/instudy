@@ -1,7 +1,6 @@
-
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 
 import { supabase } from "../../lib/supabase";
 import { useAuth } from "../../contexts/AuthContext";
@@ -41,15 +40,15 @@ export default function DashboardPage() {
       setLoading(true);
       setError("");
 
-      const { data, error } = await supabase
+      const { data, error: fetchError } = await supabase
         .from("folders")
         .select("*")
         .eq("user_id", user.id);
 
       if (!isMounted) return;
 
-      if (error) {
-        console.error("Error fetching Study Sets:", error.message);
+      if (fetchError) {
+        console.error("Error fetching Study Sets:", fetchError.message);
         setError("Unable to load your Study Sets. Please try again.");
       } else {
         setStudySets(data || []);
@@ -66,44 +65,44 @@ export default function DashboardPage() {
   }, [user]);
 
   // CREATE A STUDY SET
-  function handleStudySetCreated(newSet) {
+  const handleStudySetCreated = useCallback((newSet) => {
     setStudySets((current) => [
       newSet,
       ...current.filter((set) => set.id !== newSet.id),
     ]);
-  }
+  }, []);
 
   // OPEN RENAME MODAL
-  function handleRename(set) {
+  const handleRename = useCallback((set) => {
     setEditingSet(set);
     setCreateOpen(true);
-  }
+  }, []);
 
   // UPDATE A STUDY SET
-  function handleStudySetUpdated(updatedSet) {
+  const handleStudySetUpdated = useCallback((updatedSet) => {
     setStudySets((current) =>
-      current.map((set) =>
-        set.id === updatedSet.id ? updatedSet : set
-      )
+      current.map((set) => (set.id === updatedSet.id ? updatedSet : set))
     );
-
     setEditingSet(null);
-  }
+  }, []);
 
   // CLOSE CREATE OR RENAME MODAL
-  function handleCloseCreateModal() {
+  const handleCloseCreateModal = useCallback(() => {
     setCreateOpen(false);
     setEditingSet(null);
-  }
+  }, []);
 
   // REMOVE DELETED STUDY SET FROM DASHBOARD
-  function handleStudySetDeleted(deletedId) {
-    setStudySets((current) =>
-      current.filter((set) => set.id !== deletedId)
-    );
-
+  const handleStudySetDeleted = useCallback((deletedId) => {
+    setStudySets((current) => current.filter((set) => set.id !== deletedId));
     setDeletingSet(null);
-  }
+  }, []);
+
+  // OPEN CREATE MODAL HELPER
+  const openCreateModal = useCallback(() => {
+    setEditingSet(null);
+    setCreateOpen(true);
+  }, []);
 
   return (
     <ProtectedRoute>
@@ -112,14 +111,8 @@ export default function DashboardPage() {
 
         <main className="min-h-screen p-8 dashboard-page">
           <section className="welcome-section">
-            <p className="welcome-label">
-              YOUR PERSONAL STUDY SPACE
-            </p>
-
-            <h1 className="text-3xl font-bold">
-              Hello, learner! ✨
-            </h1>
-
+            <p className="welcome-label">YOUR PERSONAL STUDY SPACE</p>
+            <h1 className="text-3xl font-bold">Hello, learner! ✨</h1>
             <p className="mt-2 text-gray-500">
               Organize your thoughts, one reminder at a time.
             </p>
@@ -138,23 +131,20 @@ export default function DashboardPage() {
               <button
                 type="button"
                 className="create-studyset-button"
-                onClick={() => {
-                  setEditingSet(null);
-                  setCreateOpen(true);
-                }}
+                onClick={openCreateModal}
               >
                 <span>+</span> Create Study Set
               </button>
             </div>
 
-            {/* LOADING */}
+            {/* LOADING STATE */}
             {loading && (
               <div className="empty-studysets">
                 <p>Loading your Study Sets... 🌷</p>
               </div>
             )}
 
-            {/* ERROR */}
+            {/* ERROR STATE */}
             {!loading && error && (
               <div className="empty-studysets">
                 <p role="alert">{error}</p>
@@ -166,7 +156,7 @@ export default function DashboardPage() {
               <StudySetGrid
                 studySets={studySets}
                 onRename={handleRename}
-                onDelete={(set) => setDeletingSet(set)}
+                onDelete={setDeletingSet}
               />
             )}
 
@@ -174,21 +164,15 @@ export default function DashboardPage() {
             {!loading && !error && studySets.length === 0 && (
               <div className="empty-studysets">
                 <div className="empty-icon">📚</div>
-
                 <h3>Your library is waiting!</h3>
-
                 <p>
-                  Create your first Study Set and start
-                  organizing your learning materials.
+                  Create your first Study Set and start organizing your learning
+                  materials.
                 </p>
-
                 <button
                   type="button"
                   className="create-studyset-button"
-                  onClick={() => {
-                    setEditingSet(null);
-                    setCreateOpen(true);
-                  }}
+                  onClick={openCreateModal}
                 >
                   + Create your first Study Set
                 </button>

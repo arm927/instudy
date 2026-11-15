@@ -666,3 +666,119 @@
   color: var(--text-muted);
   font-size: 11px;
 }
+
+
+/* =====================================
+   INSTUDY PDF VIEWER
+===================================== */
+
+.pdf-viewer-page {
+  min-height: 100vh;
+  background: #faf9f6;
+  color: #574b5e;
+}
+
+.pdf-viewer-header {
+  height: 68px;
+  padding: 0 5%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff;
+  border-bottom: 1px solid #eee5e4;
+}
+
+.pdf-viewer-header button {
+  border: none;
+  background: none;
+  color: #806b80;
+  cursor: pointer;
+}
+
+.pdf-viewer-title {
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pdf-viewer-brand {
+  font-weight: 700;
+  color: #a47791;
+}
+
+.pdf-toolbar {
+  min-height: 55px;
+  padding: 10px 5%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff;
+  border-bottom: 1px solid #eee5e4;
+}
+
+.pdf-page-controls,
+.pdf-zoom-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.pdf-toolbar button {
+  border: 1px solid #e8dce3;
+  background: #fffaf8;
+  color: #806b80;
+  padding: 7px 12px;
+  border-radius: 7px;
+  cursor: pointer;
+}
+
+.pdf-toolbar button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.pdf-document-area {
+  min-height: calc(100vh - 123px);
+  padding: 35px 20px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  overflow: auto;
+}
+
+.pdf-document-area .react-pdf__Document {
+  display: flex;
+  justify-content: center;
+}
+
+.pdf-document-area .react-pdf__Page {
+  max-width: 100%;
+  box-shadow: 0 4px 20px rgba(60, 40, 50, 0.10);
+}
+
+.pdf-document-area canvas {
+  max-width: 100%;
+  height: auto !important;
+}
+
+.pdf-error {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+@media (max-width: 600px) {
+  .pdf-viewer-header {
+    padding: 0 16px;
+  }
+
+  .pdf-toolbar {
+    padding: 10px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .pdf-document-area {
+    padding: 20px 8px;
+  }
+}
