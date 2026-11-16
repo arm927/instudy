@@ -1,45 +1,40 @@
 "use client";
 
-import { Suspense, use, useEffect, useState } from "react";
+import { Suspense, useEffect, useState, useCallback } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import dynamic from "next/dynamic";
 
 import { supabase } from "../../../../../lib/supabase";
 import { useAuth } from "../../../../../contexts/AuthContext";
 import ProtectedRoute from "../../../../../components/ProtectedRoute";
-
-const PDFDocument = dynamic(
-  () => import("./pdfdocument"),
-  {
-    ssr: false,
-    loading: () => <p>Preparing PDF viewer...</p>,
-  }
-);
+import "../../../../../styles/viewer.css";
+const PDFDocument = dynamic(() => import("./pdfdocument"), {
+  ssr: false,
+  loading: () => null,
+});
 
 const BUCKET = "studyset-files";
 
-function PDFViewerContent({ params }) {
-  // Read ids from the URL itself (/studyset/<id>/viewer/<fileId>) so this
-  // works no matter what the dynamic folder is named.
+function PDFViewerContent() {
   const pathname = usePathname();
-  const parts = (pathname || "").split("/").filter(Boolean);
-  const id = parts[1];
-  const fileId = parts[3];
+  const match = (pathname || "").match(
+    /\/studyset\/([^/]+)\/viewer\/([^/?#]+)/
+  );
+  const id = match?.[1];
+  const fileId = match?.[2];
 
   const router = useRouter();
   const { user } = useAuth();
 
   const [file, setFile] = useState(null);
   const [pdfUrl, setPdfUrl] = useState("");
-
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-
   const [loadProgress, setLoadProgress] = useState(0);
 
   const [numPages, setNumPages] = useState(0);
   const [pageNumber, setPageNumber] = useState(1);
   const [zoom, setZoom] = useState(1);
+  const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
 
   useEffect(() => {
     if (!user || !id || !fileId) return;
@@ -47,11 +42,9 @@ function PDFViewerContent({ params }) {
     let active = true;
 
     async function loadPDF() {
-      setLoading(true);
       setError("");
 
       try {
-        // Reuse a recent signed URL so re-opening a PDF is instant.
         const cacheKey = `instudy-pdf:${fileId}`;
         try {
           const cached = JSON.parse(sessionStorage.getItem(cacheKey) || "null");
@@ -63,14 +56,13 @@ function PDFViewerContent({ params }) {
           }
         } catch {}
 
-        const { data: fileData, error: fileError } =
-          await supabase
-            .from("studyset_files")
-            .select("*")
-            .eq("id", fileId)
-            .eq("studyset_id", id)
-            .eq("user_id", user.id)
-            .single();
+        const { data: fileData, error: fileError } = await supabase
+          .from("studyset_files")
+          .select("*")
+          .eq("id", fileId)
+          .eq("studyset_id", id)
+          .eq("user_id", user.id)
+          .single();
 
         if (fileError) throw fileError;
 
@@ -78,13 +70,11 @@ function PDFViewerContent({ params }) {
           throw new Error("This file is not a PDF document.");
         }
 
-        const { data: signedData, error: signError } =
-          await supabase.storage
-            .from(BUCKET)
-            .createSignedUrl(fileData.file_path, 3600);
+        const { data: signedData, error: signError } = await supabase.storage
+          .from(BUCKET)
+          .createSignedUrl(fileData.file_path, 3600);
 
         if (signError) throw signError;
-
         if (!active) return;
 
         try {
@@ -100,15 +90,11 @@ function PDFViewerContent({ params }) {
 
         setFile(fileData);
         setPdfUrl(signedData.signedUrl);
-
       } catch (err) {
         console.error("PDF loading error:", err);
-
         if (active) {
           setError(err.message || "Unable to load document.");
         }
-      } finally {
-        if (active) setLoading(false);
       }
     }
 
@@ -119,26 +105,29 @@ function PDFViewerContent({ params }) {
     };
   }, [user, id, fileId]);
 
-  function handlePDFLoad({ numPages }) {
-    setNumPages(numPages);
-    setPageNumber(1);
+  function handlePDFLoad({ numPages: total }) {
+    setNumPages(total);
+    setLoadProgress(100);
+
+    if (!hasLoadedOnce) {
+      setPageNumber(1);
+      setHasLoadedOnce(true);
+    }
   }
 
+  const handlePageChange = useCallback((page) => {
+    setPageNumber(page);
+  }, []);
+
   function changeZoom(amount) {
-    setZoom((previous) =>
-      Math.min(2, Math.max(0.5, previous + amount))
-    );
+    setZoom((prev) => Math.min(2, Math.max(0.5, +(prev + amount).toFixed(1))));
   }
 
   return (
     <ProtectedRoute>
       <main className="pdf-viewer-page">
-
         <header className="pdf-viewer-header">
-          <button
-            type="button"
-            onClick={() => router.back()}
-          >
+          <button type="button" onClick={() => router.back()}>
             ← Back
           </button>
 
@@ -146,9 +135,7 @@ function PDFViewerContent({ params }) {
             {file?.file_name || "PDF Viewer"}
           </div>
 
-          <span className="pdf-viewer-brand">
-            InStudy
-          </span>
+          <span className="pdf-viewer-brand">InStudy</span>
         </header>
 
         <nav className="pdf-toolbar">
@@ -156,7 +143,7 @@ function PDFViewerContent({ params }) {
             <button
               type="button"
               disabled={pageNumber <= 1}
-              onClick={() => setPageNumber((p) => p - 1)}
+              onClick={() => setPageNumber((p) => Math.max(1, p - 1))}
             >
               Previous
             </button>
@@ -167,53 +154,36 @@ function PDFViewerContent({ params }) {
 
             <button
               type="button"
-              disabled={pageNumber >= numPages}
-              onClick={() => setPageNumber((p) => p + 1)}
+              disabled={!numPages || pageNumber >= numPages}
+              onClick={() => setPageNumber((p) => Math.min(numPages, p + 1))}
             >
               Next
             </button>
           </div>
 
           <div className="pdf-zoom-controls">
-            <button
-              type="button"
-              onClick={() => changeZoom(-0.1)}
-            >
+            <button type="button" onClick={() => changeZoom(-0.1)}>
               −
             </button>
-
             <span>{Math.round(zoom * 100)}%</span>
-
-            <button
-              type="button"
-              onClick={() => changeZoom(0.1)}
-            >
+            <button type="button" onClick={() => changeZoom(0.1)}>
               +
             </button>
           </div>
         </nav>
 
         <section className="pdf-document-area">
-
-          {loading && (
-            <p>Loading your document...</p>
-          )}
-
-          {!loading && error && (
+          {error && (
             <div className="pdf-error">
               <h2>Unable to open document</h2>
               <p>{error}</p>
-
-              <button
-                type="button"
-                onClick={() => router.back()}
-              >
+              <button type="button" onClick={() => router.back()}>
                 Go Back
               </button>
             </div>
           )}
 
-          {!loading && !error && pdfUrl && (
+          {!error && pdfUrl && (
             <>
               {loadProgress > 0 && loadProgress < 100 && (
                 <p className="pdf-loading-progress">
@@ -225,38 +195,41 @@ function PDFViewerContent({ params }) {
                 pdfUrl={pdfUrl}
                 pageNumber={pageNumber}
                 zoom={zoom}
+                numPages={numPages}
                 onLoadSuccess={handlePDFLoad}
                 onLoadProgress={({ loaded, total }) => {
                   if (total) {
-                    setLoadProgress(
-                      Math.round((loaded / total) * 100)
-                    );
+                    setLoadProgress(Math.round((loaded / total) * 100));
                   }
                 }}
                 onLoadError={(err) => {
                   console.error("PDF rendering error:", err);
                   setError("Unable to render this PDF.");
                 }}
+                onPageChange={handlePageChange}
               />
             </>
           )}
 
+          {!error && !pdfUrl && (
+            <p className="pdf-preparing">Preparing document…</p>
+          )}
         </section>
       </main>
     </ProtectedRoute>
   );
 }
 
-export default function PDFViewerPage({ params }) {
+export default function PDFViewerPage() {
   return (
     <Suspense
       fallback={
         <main className="pdf-viewer-page">
-          <p>Preparing your InStudy viewer...</p>
+          <p className="pdf-preparing">Preparing viewer…</p>
         </main>
       }
     >
-      <PDFViewerContent params={params} />
+      <PDFViewerContent />
     </Suspense>
   );
 }
