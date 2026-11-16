@@ -1,0 +1,219 @@
+/* ========================================
+   INSTUDY PDF VIEWER
+======================================== */
+
+.pdf-viewer-page {
+  min-height: 100vh;
+  background: #faf9f6;
+  color: #574b5e;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header */
+.pdf-viewer-header {
+  height: 68px;
+  padding: 0 5%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff;
+  border-bottom: 1px solid #eee5e4;
+  flex-shrink: 0;
+}
+
+.pdf-viewer-header button {
+  border: none;
+  background: none;
+  color: #806b80;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 8px 4px;
+}
+
+.pdf-viewer-header button:hover {
+  color: #a47791;
+}
+
+.pdf-viewer-title {
+  font-weight: 600;
+  font-size: 15px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 50%;
+  text-align: center;
+}
+
+.pdf-viewer-brand {
+  font-weight: 700;
+  color: #a47791;
+  font-size: 14px;
+}
+
+/* Toolbar */
+.pdf-toolbar {
+  min-height: 55px;
+  padding: 10px 5%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff;
+  border-bottom: 1px solid #eee5e4;
+  flex-shrink: 0;
+}
+
+.pdf-page-controls,
+.pdf-zoom-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.pdf-toolbar button {
+  border: 1px solid #e8dce3;
+  background: #fffaf8;
+  color: #806b80;
+  padding: 7px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.pdf-toolbar button:hover:not(:disabled) {
+  background: #f8eef3;
+  border-color: #d9c4d0;
+}
+
+.pdf-toolbar button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.pdf-page-controls span,
+.pdf-zoom-controls span {
+  font-size: 13px;
+  font-weight: 500;
+  color: #6b5c6e;
+  min-width: 64px;
+  text-align: center;
+}
+
+/* Document area – this is the scrollable region */
+.pdf-document-area {
+  flex: 1;
+  min-height: 0; /* important for nested scrolling */
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.pdf-scroll-container {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 32px 20px 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  scroll-behavior: smooth;
+}
+
+/* Individual page */
+.pdf-page-wrapper {
+  box-shadow: 0 4px 20px rgba(60, 40, 50, 0.1);
+  background: #fff;
+  border-radius: 4px;
+  overflow: hidden;
+  line-height: 0; /* removes extra space under canvas */
+}
+
+.pdf-page-wrapper canvas {
+  max-width: 100%;
+  height: auto !important;
+  display: block;
+}
+
+/* Progress & states */
+.pdf-loading-progress {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #fff;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 13px;
+  color: #806b80;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  z-index: 10;
+}
+
+.pdf-preparing {
+  margin: 60px auto;
+  opacity: 0.6;
+  font-size: 14px;
+  color: #806b80;
+}
+
+.pdf-error {
+  text-align: center;
+  padding: 80px 20px;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.pdf-error h2 {
+  font-size: 18px;
+  margin-bottom: 8px;
+  color: #574b5e;
+}
+
+.pdf-error p {
+  font-size: 14px;
+  color: #806b80;
+  margin-bottom: 20px;
+}
+
+.pdf-error button {
+  border: 1px solid #e8dce3;
+  background: #fffaf8;
+  color: #806b80;
+  padding: 9px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.pdf-error button:hover {
+  background: #f8eef3;
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+  .pdf-viewer-header {
+    padding: 0 16px;
+  }
+
+  .pdf-viewer-title {
+    max-width: 40%;
+    font-size: 13px;
+  }
+
+  .pdf-toolbar {
+    padding: 10px 12px;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+  }
+
+  .pdf-scroll-container {
+    padding: 20px 8px 40px;
+    gap: 16px;
+  }
+}

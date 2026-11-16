@@ -9,31 +9,24 @@ import { useAuth } from "../../../contexts/AuthContext";
 import ProtectedRoute from "../../../components/ProtectedRoute";
 import SectionManager from "../../../components/studyset/sectionmanager";
 
-
 import "../../../styles/studyset.css";
 
 function StudySetContent({ params }) {
   const { id } = use(params);
-
   const router = useRouter();
   const { user } = useAuth();
 
   const [studySet, setStudySet] = useState(null);
   const [sections, setSections] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
+    if (!user || !id) return;
+
     let isMounted = true;
 
     async function fetchStudySetData() {
-      if (!user || !id) return;
-
-      setLoading(true);
-      setError("");
-
       try {
-        // Fetch the StudySet and its sections concurrently
         const [studySetResult, sectionsResult] = await Promise.all([
           supabase
             .from("folders")
@@ -54,19 +47,13 @@ function StudySetContent({ params }) {
         if (!isMounted) return;
 
         if (studySetResult.error) {
-          console.error(
-            "Error fetching Study Set:",
-            studySetResult.error
-          );
+          console.error("Error fetching Study Set:", studySetResult.error);
           setError("We couldn't find this Study Set.");
           return;
         }
 
         if (sectionsResult.error) {
-          console.error(
-            "Error fetching sections:",
-            sectionsResult.error
-          );
+          console.error("Error fetching sections:", sectionsResult.error);
           setError("Unable to load your sections.");
           return;
         }
@@ -75,13 +62,8 @@ function StudySetContent({ params }) {
         setSections(sectionsResult.data || []);
       } catch (err) {
         console.error("StudySet loading error:", err);
-
         if (isMounted) {
           setError("Unable to load this Study Set.");
-        }
-      } finally {
-        if (isMounted) {
-          setLoading(false);
         }
       }
     }
@@ -107,50 +89,42 @@ function StudySetContent({ params }) {
             ← Back to Dashboard
           </button>
 
-          {loading && (
-            <p className="studyset-loading">
-              Loading your Study Set... 🌷
-            </p>
-          )}
-
-          {!loading && error && (
+          {error && (
             <div className="studyset-error">
               <p>{error}</p>
-              <button
-                type="button"
-                onClick={() => router.push("/dashboard")}
-              >
+              <button type="button" onClick={() => router.push("/dashboard")}>
                 Return to Dashboard
               </button>
             </div>
           )}
 
-          {!loading && !error && studySet && (
+          {/* Always render the structure. Content appears when ready. */}
+          {!error && (
             <>
               <header className="studyset-header">
                 <div className="studyset-header-icon">
-                  {studySet.icon || "📚"}
+                  {studySet?.icon || "📚"}
                 </div>
 
                 <div>
-                  <p className="studyset-header-label">
-                    YOUR STUDY SPACE
-                  </p>
+                  <p className="studyset-header-label">YOUR STUDY SPACE</p>
 
-                  <h1>{studySet.name}</h1>
+                  <h1>{studySet?.name || "\u00A0"}</h1>
 
                   <p>
-                    {studySet.description ||
+                    {studySet?.description ||
                       "Everything you need to learn, all in one place."}
                   </p>
                 </div>
               </header>
 
-              <SectionManager
-                studySetId={studySet.id}
-                userId={user.id}
-                initialSections={sections}
-              />
+              {studySet && (
+                <SectionManager
+                  studySetId={studySet.id}
+                  userId={user.id}
+                  initialSections={sections}
+                />
+              )}
             </>
           )}
         </main>
@@ -161,13 +135,7 @@ function StudySetContent({ params }) {
 
 export default function StudySetPage({ params }) {
   return (
-    <Suspense
-      fallback={
-        <p className="studyset-loading">
-          Loading your Study Set... 🌷
-        </p>
-      }
-    >
+    <Suspense fallback={null}>
       <StudySetContent params={params} />
     </Suspense>
   );

@@ -1,114 +1,3 @@
-
-/* ========================================
-   INSTUDY - LEARNING SECTIONS REDESIGN
-   Keeps existing page background and theme
-======================================== */
-
-/* HEADER */
-
-
-.dashboard-header {
-  width: 100%;
-  min-height: 76px;
-  padding: 16px 32px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: #ffffff;
-  border-bottom: 1px solid #eee8f1;
-  position: relative;
-}
-
-.dashboard-logo {
-  display: flex;
-  align-items: center;
-  text-decoration: none;
-  flex-shrink: 0;
-}
-
-.dashboard-logo-image {
-  display: block;
-  width: 185px;
-  height: 95px;
-  object-fit: contain;
-  object-position: left center;
-}
-
-
-.dashboard-header-right {
-  display: flex;
-  align-items: right;
-  gap: 22px;
-}
-
-.dashboard-user {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.dashboard-user-icon {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: #eee3f5;
-  color: #75558c;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-}
-
-.dashboard-user-name {
-  color: #51465b;
-  font-size: 14px;
-  font-weight: 600;
-}
-
-.logout-button {
-  padding: 9px 17px;
-  border: 1px solid #e5d9eb;
-  border-radius: 9px;
-  background: #ffffff;
-  color: #75558c;
-  font-weight: 600;
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-.logout-button:hover {
-  background: #75558c;
-  color: #ffffff;
-}
-
-.logout-button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.logout-error {
-  position: absolute;
-  right: 32px;
-  top: 100%;
-  color: #dc2626;
-  font-size: 13px;
-}
-
-@media (max-width: 600px) {
-  .dashboard-header {
-    padding: 14px 16px;
-  }
-
-  .dashboard-header-right {
-    gap: 10px;
-  }
-
-  .dashboard-user-name {
-    display: none;
-  }
-}
-
-
 /* Main section manager */
 .section-manager {
   margin-top: 28px;
@@ -117,10 +6,6 @@
   border-radius: 22px;
   background: var(--bg-card);
   box-shadow: var(--shadow-subtle);
-}
-
-.section-manager-header {
-  margin-bottom: 20px;
 }
 
 .section-manager-header h2 {
@@ -132,10 +17,6 @@
   margin: 0;
   font-size: 13px;
   color: var(--text-muted);
-}
-
-.section-count {
-  flex-shrink: 0;
 }
 
 /* Create section form */
@@ -171,6 +52,8 @@
   background: var(--primary);
   color: white;
   font-size: 13px;
+  cursor: pointer;
+  transition: var(--transition-fast);
 }
 
 .create-section-form button:hover:not(:disabled) {
@@ -193,7 +76,6 @@
   box-shadow: 0 5px 16px rgba(120, 75, 95, 0.06);
 }
 
-/* Section heading */
 .learning-section-card-header {
   display: flex;
   align-items: center;
@@ -202,14 +84,6 @@
   padding: 19px 20px;
   background: linear-gradient(110deg, #fff7f8, #fff);
   border-bottom: 1px solid var(--border-color);
-}
-
-.learning-section-title {
-  display: flex;
-  align-items: center;
-  font-size: 12px;
-  gap: 12px;
-  min-width: 0;
 }
 
 .section-number {
@@ -222,58 +96,28 @@
   border-radius: 50%;
   background: #f8e8ed;
   color: #a66c82;
-  font-size: 21px;
+  font-size: 15px;          /* was 21px – looks better smaller */
   font-weight: 700;
 }
 
 .learning-section-title h3 {
-  margin: 0 0 5px;
-  color: var(--text-main);
+  margin: 0 0 4px;
   font-size: 16px;
   overflow-wrap: anywhere;
 }
 
 .learning-section-title p {
   margin: 0;
+  font-size: 12px;
   color: var(--text-muted);
-  font-size: 12px;
 }
 
-.section-actions {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-shrink: 0;
-}
-
-.section-actions button {
-  padding: 8px 12px;
-  border: 1px solid var(--border-light);
-  border-radius: 9px;
-  background: #fff;
-  color: #a66c82;
-  font-size: 12px;
-  cursor: pointer;
-  transition: var(--transition-fast);
-}
-
-.section-actions button:hover {
-  background: var(--primary-light);
-}
-
-.section-actions .section-delete-button {
-  padding: 8px 10px;
-  border: 1px solid var(--border-light);
-  color: #c77e99;
-}
-
-/* Four content panels */
+/* Content panels */
 .learning-section-content {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
   padding: 18px;
-  align-items: start;
 }
 
 .learning-panel {
@@ -283,129 +127,17 @@
   border: 1px solid var(--border-color);
   border-radius: 14px;
   background: #fffdfd;
-  font-size:21px;
+  font-size: 13px;          /* fixed from 21px */
 }
 
 .learning-panel h4 {
   margin: 0 0 12px;
   padding-bottom: 10px;
   border-bottom: 1px solid #f4e9ed;
-  color: var(--text-main);
   font-size: 13px;
 }
 
-.learning-panel > p {
-  min-height: 35px;
-  margin: 0 0 12px;
-  color: var(--text-muted);
-  font-size: 12px;
-}
-
-.learning-panel > button {
-  width: 100%;
-  padding: 9px;
-  border: 1px dashed #e9bdcc;
-  border-radius: 9px;
-  background: #fff;
-  color: #a66c82;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.learning-panel > button:hover:not(:disabled) {
-  background: var(--primary-light);
-}
-
-.learning-panel > button:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-}
-
-/* FileUpload nested inside Materials panel */
-.materials-panel .file-upload-section {
-  margin: 0;
-  padding: 0;
-  border: none;
-  border-radius: 0;
-  background: transparent;
-  box-shadow: none;
-}
-
-.materials-panel .file-section-header {
-  display: none;
-}
-
-.materials-panel .file-dropzone {
-  padding: 18px 10px;
-  border-radius: 11px;
-  background: #fff9fb;
-}
-
-.materials-panel .upload-icon {
-  font-size: 25px;
-  margin-bottom: 6px;
-}
-
-.materials-panel .file-dropzone h3 {
-  font-size: 12px;
-}
-
-.materials-panel .file-dropzone p {
-  margin-bottom: 10px;
-  font-size: 11px;
-}
-
-.materials-panel .upload-button {
-  padding: 8px 13px;
-  font-size: 11px;
-}
-
-.materials-panel .file-dropzone small {
-  font-size: 10px;
-  text-align: center;
-}
-
-.materials-panel .uploaded-files {
-  margin-top: 16px;
-}
-
-.materials-panel .uploaded-files h3 {
-  margin-bottom: 10px;
-  font-size: 12px;
-}
-
-.materials-panel .uploaded-file {
-  flex-wrap: wrap;
-  gap: 8px;
-  padding: 9px;
-}
-
-.materials-panel .file-icon {
-  width: 30px;
-  height: 30px;
-  font-size: 15px;
-}
-
-.materials-panel .file-details {
-  flex-basis: calc(100% - 45px);
-}
-
-.materials-panel .file-details strong {
-  font-size: 11px;
-}
-
-.materials-panel .file-details span {
-  font-size: 10px;
-}
-
-.materials-panel .file-open-button,
-.materials-panel .file-delete-button {
-  padding: 6px 9px;
-  font-size: 11px;
-}
-
-/* Empty state */
-.section-loading,
+/* Empty state – keep only this */
 .empty-sections {
   padding: 35px 15px;
   text-align: center;
@@ -423,362 +155,4 @@
 
 .empty-sections p {
   font-size: 13px;
-}
-
-.section-error {
-  padding: 10px 13px;
-  border-radius: 9px;
-  background: #fff0f0;
-}
-
-/* Responsive */
-@media (max-width: 1000px) {
-  .learning-section-content {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media (max-width: 600px) {
-  .section-manager {
-    padding: 18px;
-  }
-
-  .section-manager-header {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-
-  .create-section-form {
-    flex-direction: column;
-  }
-
-  .create-section-form button {
-    width: 100%;
-  }
-
-  .learning-section-card-header {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-
-  .learning-section-content {
-    grid-template-columns: 1fr;
-    padding: 12px;
-  }
-
-  .learning-panel {
-    min-height: auto;
-  }
-}
-
-
-/* Compact Materials Upload Button */
-
-.material-upload-action {
-  width: 100%;
-  margin-bottom: 16px;
-}
-
-.material-upload-button {
-  width: 100%;
-  padding: 10px 12px;
-  border: 1px dashed #e9bdcc;
-  border-radius: 9px;
-  background: #fff;
-  color: #a66c82;
-  font-family: inherit;
-  font-size: 12px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: var(--transition-fast);
-}
-
-.material-upload-button:hover:not(:disabled) {
-  background: var(--primary-light);
-  border-color: var(--primary);
-}
-
-.material-upload-button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-
-/* ========================================
-   NOTES MANAGER
-======================================== */
-
-.notes-manager {
-  width: 100%;
-}
-
-.notes-manager-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  margin-bottom: 12px;
-  font-size: 11px;
-  color: var(--text-muted);
-}
-
-.notes-add-button {
-  padding: 8px 10px;
-  border: 1px solid #e9bdcc;
-  border-radius: 8px;
-  background: #fff;
-  color: #a66c82;
-  font-size: 11px;
-  cursor: pointer;
-}
-
-.notes-add-button:hover {
-  background: var(--primary-light);
-}
-
-.notes-manager-empty {
-  padding: 15px 5px;
-  text-align: center;
-}
-
-.notes-manager-empty span {
-  font-size: 25px;
-}
-
-.notes-manager-empty p {
-  margin: 7px 0 3px;
-  font-size: 12px;
-  color: var(--text-main);
-}
-
-.notes-manager-empty small {
-  font-size: 10px;
-  color: var(--text-muted);
-}
-
-.notes-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.notes-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px;
-  border: 1px solid var(--border-color);
-  border-radius: 9px;
-  background: #fff;
-}
-
-.notes-item-content {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  gap: 5px;
-  min-width: 0;
-  border: none;
-  background: transparent;
-  text-align: left;
-  cursor: pointer;
-}
-
-.notes-item-content strong {
-  color: var(--text-main);
-  font-size: 12px;
-}
-
-.notes-item-content span {
-  overflow: hidden;
-  color: var(--text-muted);
-  font-size: 10px;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-
-.notes-delete-button {
-  border: none;
-  background: transparent;
-  color: #c77e99;
-  cursor: pointer;
-}
-
-.notes-editor {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.notes-editor-header,
-.notes-editor-actions {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-}
-
-.notes-editor input,
-.notes-editor textarea {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid var(--border-color);
-  border-radius: 9px;
-  outline: none;
-  background: #fff;
-  color: var(--text-main);
-  font: inherit;
-  font-size: 12px;
-}
-
-.notes-editor textarea {
-  resize: vertical;
-  min-height: 130px;
-}
-
-.notes-editor input:focus,
-.notes-editor textarea:focus {
-  border-color: var(--primary);
-}
-
-.notes-editor-header button,
-.notes-editor-actions button {
-  padding: 8px 12px;
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  background: white;
-  color: #a66c82;
-  cursor: pointer;
-  font-size: 11px;
-}
-
-.notes-editor-actions button[type="submit"] {
-  background: var(--primary);
-  color: white;
-}
-
-.notes-manager-error {
-  color: #dc2626;
-  font-size: 11px;
-}
-
-.notes-manager-message {
-  color: var(--text-muted);
-  font-size: 11px;
-}
-
-
-/* =====================================
-   INSTUDY PDF VIEWER
-===================================== */
-
-.pdf-viewer-page {
-  min-height: 100vh;
-  background: #faf9f6;
-  color: #574b5e;
-}
-
-.pdf-viewer-header {
-  height: 68px;
-  padding: 0 5%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: #fff;
-  border-bottom: 1px solid #eee5e4;
-}
-
-.pdf-viewer-header button {
-  border: none;
-  background: none;
-  color: #806b80;
-  cursor: pointer;
-}
-
-.pdf-viewer-title {
-  font-weight: 600;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.pdf-viewer-brand {
-  font-weight: 700;
-  color: #a47791;
-}
-
-.pdf-toolbar {
-  min-height: 55px;
-  padding: 10px 5%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: #fff;
-  border-bottom: 1px solid #eee5e4;
-}
-
-.pdf-page-controls,
-.pdf-zoom-controls {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.pdf-toolbar button {
-  border: 1px solid #e8dce3;
-  background: #fffaf8;
-  color: #806b80;
-  padding: 7px 12px;
-  border-radius: 7px;
-  cursor: pointer;
-}
-
-.pdf-toolbar button:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
-.pdf-document-area {
-  min-height: calc(100vh - 123px);
-  padding: 35px 20px;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  overflow: auto;
-}
-
-.pdf-document-area .react-pdf__Document {
-  display: flex;
-  justify-content: center;
-}
-
-.pdf-document-area .react-pdf__Page {
-  max-width: 100%;
-  box-shadow: 0 4px 20px rgba(60, 40, 50, 0.10);
-}
-
-.pdf-document-area canvas {
-  max-width: 100%;
-  height: auto !important;
-}
-
-.pdf-error {
-  text-align: center;
-  padding: 60px 20px;
-}
-
-@media (max-width: 600px) {
-  .pdf-viewer-header {
-    padding: 0 16px;
-  }
-
-  .pdf-toolbar {
-    padding: 10px;
-    flex-wrap: wrap;
-    gap: 12px;
-  }
-
-  .pdf-document-area {
-    padding: 20px 8px;
-  }
 }
