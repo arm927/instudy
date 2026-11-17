@@ -11,7 +11,7 @@ export default function NotesManager({
 }) {
   const [notes, setNotes] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [editingNote, setEditingNote] = useState(null);
+  const [editingNote, setEditingNote] = useState(undefined);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [saving, setSaving] = useState(false);

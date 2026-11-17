@@ -8,6 +8,7 @@ import { supabase } from "../../../../../lib/supabase";
 import { useAuth } from "../../../../../contexts/AuthContext";
 import ProtectedRoute from "../../../../../components/ProtectedRoute";
 import "../../../../../styles/viewer.css";
+
 const PDFDocument = dynamic(() => import("./pdfdocument"), {
   ssr: false,
   loading: () => null,
@@ -35,6 +36,12 @@ function PDFViewerContent() {
   const [pageNumber, setPageNumber] = useState(1);
   const [zoom, setZoom] = useState(1);
   const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
+
+  // Split view
+  const [splitMode, setSplitMode] = useState(false);
+
+  // Notes (simple for now – you can later load/save from Supabase)
+  const [notes, setNotes] = useState("");
 
   useEffect(() => {
     if (!user || !id || !fileId) return;
@@ -125,7 +132,7 @@ function PDFViewerContent() {
 
   return (
     <ProtectedRoute>
-      <main className="pdf-viewer-page">
+      <main className={`pdf-viewer-page ${splitMode ? "split-mode" : ""}`}>
         <header className="pdf-viewer-header">
           <button type="button" onClick={() => router.back()}>
             ← Back
@@ -135,7 +142,16 @@ function PDFViewerContent() {
             {file?.file_name || "PDF Viewer"}
           </div>
 
-          <span className="pdf-viewer-brand">InStudy</span>
+          <div className="pdf-viewer-header-actions">
+            <button
+              type="button"
+              className={`split-toggle ${splitMode ? "active" : ""}`}
+              onClick={() => setSplitMode((v) => !v)}
+            >
+              {splitMode ? "Close Notes" : "Split View"}
+            </button>
+            <span className="pdf-viewer-brand">InStudy</span>
+          </div>
         </header>
 
         <nav className="pdf-toolbar">
@@ -172,51 +188,93 @@ function PDFViewerContent() {
           </div>
         </nav>
 
-        <section className="pdf-document-area">
-          {error && (
-            <div className="pdf-error">
-              <h2>Unable to open document</h2>
-              <p>{error}</p>
-              <button type="button" onClick={() => router.back()}>
-                Go Back
-              </button>
-            </div>
-          )}
+        <div className="viewer-layout">
+          {/* PDF side – always mounted */}
+          <section className="pdf-document-area">
+            {error && (
+              <div className="pdf-error">
+                <h2>Unable to open document</h2>
+                <p>{error}</p>
+                <button type="button" onClick={() => router.back()}>
+                  Go Back
+                </button>
+              </div>
+            )}
 
-          {!error && pdfUrl && (
-            <>
-              {loadProgress > 0 && loadProgress < 100 && (
-                <p className="pdf-loading-progress">
-                  Downloading document: {loadProgress}%
-                </p>
-              )}
+            {!error && pdfUrl && (
+              <>
+                {loadProgress > 0 && loadProgress < 100 && (
+                  <p className="pdf-loading-progress">
+                    Downloading document: {loadProgress}%
+                  </p>
+                )}
 
-              <PDFDocument
-                pdfUrl={pdfUrl}
-                pageNumber={pageNumber}
-                zoom={zoom}
-                numPages={numPages}
-                onLoadSuccess={handlePDFLoad}
-                onLoadProgress={({ loaded, total }) => {
-                  if (total) {
-                    setLoadProgress(Math.round((loaded / total) * 100));
-                  }
-                }}
-                onLoadError={(err) => {
-                  console.error("PDF rendering error:", err);
-                  setError("Unable to render this PDF.");
-                }}
-                onPageChange={handlePageChange}
+                <PDFDocument
+                  pdfUrl={pdfUrl}
+                  pageNumber={pageNumber}
+                  zoom={zoom}
+                  numPages={numPages}
+                  onLoadSuccess={handlePDFLoad}
+                  onLoadProgress={({ loaded, total }) => {
+                    if (total) {
+                      setLoadProgress(Math.round((loaded / total) * 100));
+                    }
+                  }}
+                  onLoadError={(err) => {
+                    console.error("PDF rendering error:", err);
+                    setError("Unable to render this PDF.");
+                  }}
+                  onPageChange={handlePageChange}
+                />
+              </>
+            )}
+
+            {!error && !pdfUrl && (
+              <p className="pdf-preparing">Preparing document…</p>
+            )}
+          </section>
+
+          {/* Notes side – only mounted when split is active */}
+          {splitMode && (
+            <aside className="notes-panel">
+              <div className="notes-header">
+                <h3>Notes</h3>
+              </div>
+              <NotesEditor
+                initialValue={notes}
+                onChange={setNotes}
               />
-            </>
+            </aside>
           )}
-
-          {!error && !pdfUrl && (
-            <p className="pdf-preparing">Preparing document…</p>
-          )}
-        </section>
+        </div>
       </main>
     </ProtectedRoute>
+  );
+}
+
+// Isolated notes component – typing here never touches the PDF
+function NotesEditor({ initialValue = "", onChange }) {
+  const [value, setValue] = useState(initialValue);
+
+  // Keep local state in sync if parent ever changes the value
+  useEffect(() => {
+    setValue(initialValue);
+  }, [initialValue]);
+
+  const handleChange = (e) => {
+    const next = e.target.value;
+    setValue(next);
+    onChange?.(next);
+  };
+
+  return (
+    <textarea
+      className="notes-textarea"
+      value={value}
+      onChange={handleChange}
+      placeholder="Write notes for this document…"
+      spellCheck={true}
+    />
   );
 }
 
